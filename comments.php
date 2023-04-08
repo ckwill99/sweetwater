@@ -12,7 +12,13 @@
 			$query = "SELECT * from sweetwater_test";
 			$res = $conn->query($query);
 			while($data = $res->fetch_array()){
-				echo $data['comments'].'<br>';
+				if(str_contains($data['comments'], 'Expected Ship Date:')){
+					list($comments, $ship_date) = explode('Expected Ship Date:', $data['comments']);
+					if($ship_date != ''){
+						$ship_date = date('Y-m-d H:i:s', strtotime($ship_date));
+						$conn->query("UPDATE sweetwater_test SET shipdate_expected = '".$ship_date."' WHERE orderid = '".$data['orderid']."'");
+					}
+				}
 			}
 		?>
 	</body>
